@@ -1,5 +1,5 @@
 # CPSC 240 Final Project 
-###ASM x86 Command Line Calculator
+### ASM x86 Command Line Calculator
 
 
 ### How to run
