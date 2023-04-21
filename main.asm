@@ -16,6 +16,11 @@
 	ret
 %endmacro
 
+section .bss
+	equation resb 10 
+	ascii    resb 10
+	buffer   resb 10
+
 section .data
 	; Intro Message
 	intro_msg db 0dh, 0ah, 0dh, 0ah, " ************************* Welcome to CLI Calculator ************************* ", 0dh, 0ah, 0dh, 0ah
@@ -27,10 +32,6 @@ section .data
 	result_msg db " Your Result is: ", 0dh, 0ah
 	result_len equ $-result-msg
 
-section .bss
-	equation resb 10 
-	ascii    resb 10
-	buffer   resb 10
 
 section .text
 	global _start
