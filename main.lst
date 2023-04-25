@@ -1,0 +1,67 @@
+     1                                 %line 8+1 main.asm
+     2                                 
+     3                                 %line 16+1 main.asm
+     4                                 
+     5                                 [section .bss]
+     6 00000000 <gap>                   equation resb 10
+     7 0000000A <gap>                   ascii resb 10
+     8 00000014 <gap>                   buffer resb 10
+     9                                 
+    10                                 [section .data]
+    11                                 
+    12 00000000 0D0A0D0A202A2A2A2A-     intromsg db 0d
+    13 00000000 2A2A2A2A2A2A2A2A2A-
+    14 00000000 2A2A2A2A2A2A2A2A2A-
+    15 00000000 2A2A2A2057656C636F-
+    16 00000000 6D6520746F20434C49-
+    17 00000000 2043616C63756C6174-
+    18 00000000 6F72202A2A2A2A2A2A-
+    19 00000000 2A2A2A2A2A2A2A2A2A-
+    20 00000000 2A2A2A2A2A2A2A2A2A-
+    21 00000000 2A200D0A0D0A       
+    22                                  introlen equ $-intromsg
+    23                                 
+    24 00000057 0D0A20506C65617365-     promptmsg db 0d
+    25 00000057 20656E746572207468-
+    26 00000057 65204571756174696F-
+    27 00000057 6E207468617420796F-
+    28 00000057 752077616E74206576-
+    29 00000057 616C75617465643A20 
+    30                                  promptlen equ $-promptmsg
+    31                                 
+    32 0000008D 0D0A20596F75722052-     resultmsg db 0d
+    33 0000008D 6573756C742069733A-
+    34 0000008D 20                 
+    35                                  resultlen equ $-resultmsg
+    36                                 
+    37                                 
+    38                                 [section .text]
+    39                                 [global _start]
+    40                                 
+    41                                 _start:
+    42 00000000 49C7C200000000          mov r10, 0
+    43                                 
+    44                                 next1:
+    45 00000007 48C7C001000000          mov rax, 1
+    46                                 %line 41+0 main.asm
+    47 0000000E 48C7C701000000          mov rdi, 1
+    48 00000015 48C7C6[00000000]        mov rsi, intromsg
+    49 0000001C 48BA57000000000000-     mov rdx, introlen
+    50 0000001C 00                 
+    51 00000026 0F05                    syscall
+    52                                 %line 42+1 main.asm
+    53 00000028 48C7C001000000          mov rax, 1
+    54                                 %line 42+0 main.asm
+    55 0000002F 48C7C701000000          mov rdi, 1
+    56 00000036 48C7C6[00000000]        mov rsi, promptmsg
+    57 0000003D 48BA36000000000000-     mov rdx, promptlen
+    58 0000003D 00                 
+    59 00000047 0F05                    syscall
+    60                                 %line 43+1 main.asm
+    61                                 
+    62                                 
+    63                                 exit:
+    64 00000049 48C7C03C000000          mov rax, 60
+    65 00000050 48C7C700000000          mov rdi, 0
+    66 00000057 0F05                    syscall
+    67                                 

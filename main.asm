@@ -1,19 +1,17 @@
-&macro ostream 2
+%macro ostream 2
 	mov rax, 1
 	mov rdi, 1
 	mov rsi, %1
 	mov rdx, %2
 	syscall
-	ret
 %endmacro
 
-&macro istream 2
+%macro istream 2
 	mov rax, 0
 	mov rdi, 0
 	mov rsi %1
 	mov rdx %2
 	syscall
-	ret
 %endmacro
 
 section .bss
@@ -23,14 +21,14 @@ section .bss
 
 section .data
 	; Intro Message
-	intro_msg db 0dh, 0ah, 0dh, 0ah, " ************************* Welcome to CLI Calculator ************************* ", 0dh, 0ah, 0dh, 0ah
-	intro_len equ $-intro_msg
+	intromsg db 0dh, 0ah, 0dh, 0ah, " ************************* Welcome to CLI Calculator ************************* ", 0dh, 0ah, 0dh, 0ah
+	introlen equ $-intromsg
 	; Prompt Message
-	prompt_msg db " Please enter the Equation that you want evaluated: ", 0dh, 0ah
-	promt_len equ $-prompt-msg
+	promptmsg db 0dh, 0ah, " Please enter the Equation that you want evaluated: "
+	promptlen equ $-promptmsg
 	; Result Message
-	result_msg db " Your Result is: ", 0dh, 0ah
-	result_len equ $-result-msg
+	resultmsg db 0dh, 0ah, " Your Result is: "
+	resultlen equ $-resultmsg
 
 
 section .text
@@ -40,9 +38,9 @@ _start:
 	mov r10, 0 
 
 next1: 
-	ostream intro_msg, intro_len
-	ostream prompt_msg, prompt_len
-	istream buffer, 
+	ostream intromsg, introlen
+	ostream promptmsg, promptlen
+	; istream buffer, 
 
 exit: 
 	mov rax, 60
