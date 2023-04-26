@@ -1,67 +1,116 @@
-     1                                 %line 8+1 main.asm
+     1                                 %line 1+1 main.asm
      2                                 
-     3                                 %line 16+1 main.asm
+     3                                 
      4                                 
-     5                                 [section .bss]
-     6 00000000 <gap>                   equation resb 10
-     7 0000000A <gap>                   ascii resb 10
-     8 00000014 <gap>                   buffer resb 10
+     5                                 
+     6                                 
+     7                                 
+     8                                 %line 14+1 main.asm
      9                                 
-    10                                 [section .data]
+    10                                 %line 22+1 main.asm
     11                                 
-    12 00000000 0D0A0D0A202A2A2A2A-     intromsg db 0d
-    13 00000000 2A2A2A2A2A2A2A2A2A-
-    14 00000000 2A2A2A2A2A2A2A2A2A-
-    15 00000000 2A2A2A2057656C636F-
-    16 00000000 6D6520746F20434C49-
-    17 00000000 2043616C63756C6174-
-    18 00000000 6F72202A2A2A2A2A2A-
-    19 00000000 2A2A2A2A2A2A2A2A2A-
-    20 00000000 2A2A2A2A2A2A2A2A2A-
-    21 00000000 2A200D0A0D0A       
-    22                                  introlen equ $-intromsg
+    12                                 
+    13                                 
+    14                                 
+    15                                 
+    16                                 
+    17                                 
+    18                                 [section .bss]
+    19 00000000 <gap>                   equation resb 100
+    20 00000064 <gap>                   ascii resb 100
+    21 000000C8 <gap>                   buffer resb 100
+    22                                 
     23                                 
-    24 00000057 0D0A20506C65617365-     promptmsg db 0d
-    25 00000057 20656E746572207468-
-    26 00000057 65204571756174696F-
-    27 00000057 6E207468617420796F-
-    28 00000057 752077616E74206576-
-    29 00000057 616C75617465643A20 
-    30                                  promptlen equ $-promptmsg
-    31                                 
-    32 0000008D 0D0A20596F75722052-     resultmsg db 0d
-    33 0000008D 6573756C742069733A-
-    34 0000008D 20                 
-    35                                  resultlen equ $-resultmsg
-    36                                 
-    37                                 
-    38                                 [section .text]
-    39                                 [global _start]
-    40                                 
-    41                                 _start:
-    42 00000000 49C7C200000000          mov r10, 0
-    43                                 
-    44                                 next1:
-    45 00000007 48C7C001000000          mov rax, 1
-    46                                 %line 41+0 main.asm
-    47 0000000E 48C7C701000000          mov rdi, 1
-    48 00000015 48C7C6[00000000]        mov rsi, intromsg
-    49 0000001C 48BA57000000000000-     mov rdx, introlen
-    50 0000001C 00                 
-    51 00000026 0F05                    syscall
-    52                                 %line 42+1 main.asm
-    53 00000028 48C7C001000000          mov rax, 1
-    54                                 %line 42+0 main.asm
-    55 0000002F 48C7C701000000          mov rdi, 1
-    56 00000036 48C7C6[00000000]        mov rsi, promptmsg
-    57 0000003D 48BA36000000000000-     mov rdx, promptlen
-    58 0000003D 00                 
-    59 00000047 0F05                    syscall
-    60                                 %line 43+1 main.asm
-    61                                 
+    24                                 
+    25                                 
+    26                                 
+    27                                 
+    28                                 
+    29                                 [section .data]
+    30                                 
+    31 00000000 0D0A0D0A202A2A2A2A-     intromsg db 0d
+    32 00000000 2A2A2A2A2A2A2A2A2A-
+    33 00000000 2A2A2A2A2A2A2A2A2A-
+    34 00000000 2A2A2A2057656C636F-
+    35 00000000 6D6520746F20434C49-
+    36 00000000 2043616C63756C6174-
+    37 00000000 6F72202A2A2A2A2A2A-
+    38 00000000 2A2A2A2A2A2A2A2A2A-
+    39 00000000 2A2A2A2A2A2A2A2A2A-
+    40 00000000 2A200D0A0D0A       
+    41                                  introlen equ $-intromsg
+    42                                 
+    43 00000057 0D0A20506C65617365-     promptmsg db 0d
+    44 00000057 20656E746572207468-
+    45 00000057 65204571756174696F-
+    46 00000057 6E207468617420796F-
+    47 00000057 752077616E74206576-
+    48 00000057 616C75617465642028-
+    49 00000057 446F6E277420757365-
+    50 00000057 7220616E7920737061-
+    51 00000057 63657321293A20     
+    52                                  promptlen equ $-promptmsg
+    53                                 
+    54 000000A6 0D0A20686173206120-     resultmsg db 0d
+    55 000000A6 726573756C74206F66-
+    56 000000A6 3A20               
+    57                                  resultlen equ $-resultmsg
+    58                                 
+    59                                 
+    60                                 [section .text]
+    61                                 [global _start]
     62                                 
-    63                                 exit:
-    64 00000049 48C7C03C000000          mov rax, 60
-    65 00000050 48C7C700000000          mov rdi, 0
-    66 00000057 0F05                    syscall
+    63                                 _start:
+    64 00000000 49C7C200000000          mov r10, 0
+    65                                 
+    66                                 
     67                                 
+    68                                 
+    69                                 
+    70                                 
+    71                                 
+    72                                 START:
+    73 00000007 48C7C001000000          mov rax, 1
+    74                                 %line 65+0 main.asm
+    75 0000000E 48C7C701000000          mov rdi, 1
+    76 00000015 48C7C6[00000000]        mov rsi, intromsg
+    77 0000001C 48BA57000000000000-     mov rdx, introlen
+    78 0000001C 00                 
+    79 00000026 0F05                    syscall
+    80                                 %line 66+1 main.asm
+    81 00000028 48C7C001000000          mov rax, 1
+    82                                 %line 66+0 main.asm
+    83 0000002F 48C7C701000000          mov rdi, 1
+    84 00000036 48C7C6[00000000]        mov rsi, promptmsg
+    85 0000003D 48BA4F000000000000-     mov rdx, promptlen
+    86 0000003D 00                 
+    87 00000047 0F05                    syscall
+    88                                 %line 67+1 main.asm
+    89 00000049 48C7C000000000          mov rax, 0
+    90                                 %line 67+0 main.asm
+    91 00000050 48C7C700000000          mov rdi, 0
+    92 00000057 48C7C6[00000000]        mov rsi, buffer
+    93 0000005E 48C7C264000000          mov rdx, 100
+    94 00000065 0F05                    syscall
+    95                                 %line 68+1 main.asm
+    96                                 
+    97                                 
+    98 00000067 8A0425[00000000]        mov al , byte[buffer]
+    99 0000006E B00F                    mov al , 0f
+   100 00000070 880425[00000000]        mov byte[equation] , al
+   101                                 
+   102                                 
+   103 00000077 48C7C001000000          mov rax, 1
+   104                                 %line 75+0 main.asm
+   105 0000007E 48C7C701000000          mov rdi, 1
+   106 00000085 48C7C6[00000000]        mov rsi, buffer
+   107 0000008C 48C7C264000000          mov rdx, 100
+   108 00000093 0F05                    syscall
+   109                                 %line 76+1 main.asm
+   110                                 
+   111                                 
+   112                                 exit:
+   113 00000095 48C7C03C000000          mov rax, 60
+   114 0000009C 48C7C700000000          mov rdi, 0
+   115 000000A3 0F05                    syscall
+   116                                 
