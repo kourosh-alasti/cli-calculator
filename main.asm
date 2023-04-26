@@ -27,9 +27,9 @@
 ;; ---------------------------------- ;;
 
 section .bss
-	equation resb 100 
-	ascii    resb 100
-	buffer   resb 100
+	equation resq 100 
+	ascii    resq 100
+	buffer   resq 100
 
 ;; ---------------------------------- ;;
 ;;  																	;;
@@ -38,12 +38,22 @@ section .bss
 ;; ---------------------------------- ;;
 
 section .data
+	; -----
+	; CONSTANTS
+	EXIT_SUCCESS equ 0
+	SYS_EXIT     equ 60
+
+	; -----
 	; Intro Message
 	intromsg db 0dh, 0ah, 0dh, 0ah, " ************************* Welcome to CLI Calculator ************************* ", 0dh, 0ah, 0dh, 0ah
 	introlen equ $-intromsg
+
+	; -----
 	; Prompt Message
 	promptmsg db 0dh, 0ah, " Please enter the Equation that you want evaluated (Don't user any spaces!): "
 	promptlen equ $-promptmsg
+
+	; -----
 	; Result Message
 	resultmsg db 0dh, 0ah, " has a result of: "
 	resultlen equ $-resultmsg
@@ -76,7 +86,7 @@ START:
 
 
 exit: 
-	mov rax, 60
-	mov rdi, 0
+	mov rax, SYS_EXIT      ; Call code for exit
+	mov rdi, EXIT_SUCCESS  ; Exit program with success
 	syscall 
 

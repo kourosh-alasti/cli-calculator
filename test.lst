@@ -1,0 +1,81 @@
+     1                                 %line 1+1 test.asm
+     2                                 [section .data]
+     3 00000000 456E74657220657175-     prompt1 db "Enter equation: ", 0
+     4 00000000 6174696F6E3A2000   
+     5 00000011 526573756C743A2000      prompt2 db "Result: ", 0
+     6                                 
+     7                                 [section .bss]
+     8 00000000 <gap>                   equation resb 8
+     9                                 
+    10                                 [section .text]
+    11                                 [global _start]
+    12                                 
+    13                                 _start:
+    14                                 
+    15 00000000 48C7C000000000          mov rax, 0
+    16 00000007 48C7C700000000          mov rdi, 0
+    17 0000000E 48C7C6[00000000]        mov rsi, equation
+    18 00000015 48C7C208000000          mov rdx, 8
+    19 0000001C CD80                    int 0x80
+    20                                 
+    21 0000001E 8B0425[01000000]        mov eax, [equation+1]
+    22 00000025 8B1C25[02000000]        mov ebx, [equation+2]
+    23 0000002C 8B0C25[04000000]        mov ecx, [equation+4]
+    24 00000033 8B1425[06000000]        mov edx, [equation+6]
+    25                                 
+    26 0000003A 803C25[01000000]2B      cmp byte[equation+1], '+'
+    27 00000042 741C                    je PLUS
+    28                                 
+    29 00000044 803C25[01000000]2D      cmp byte[equation+1], '-'
+    30 0000004C 7416                    je MINUS
+    31                                 
+    32 0000004E 803C25[01000000]2A      cmp byte[equation+1], '*'
+    33 00000056 7410                    je TIME
+    34                                 
+    35 00000058 803C25[01000000]2F      cmp byte[equation+1], '/'
+    36 00000060 740A                    je DIVIDE
+    37                                 
+    38                                 PLUS:
+    39 00000062 01D8                    add eax, ebx
+    40 00000064 EB0A                    jmp display
+    41                                 
+    42                                 MINUS:
+    43 00000066 29D8                    sub eax, ebx
+    44 00000068 EB06                    jmp display
+    45                                 
+    46                                 TIME:
+    47 0000006A F7E3                    mul ebx
+    48 0000006C EB02                    jmp display
+    49                                 
+    50                                 DIVIDE:
+    51 0000006E F7F3                    div ebx
+    52 00000070 EBFE                    jmp display
+    53                                 
+    54                                 display:
+    55 00000072 B804000000              mov eax, 4
+    56 00000077 BB01000000              mov ebx, 1
+    57 0000007C B9[00000000]            mov ecx, prompt1
+    58 00000081 BA10000000              mov edx, 16
+    59 00000086 CD80                    int 0x80
+    60                                 
+    61 00000088 B804000000              mov eax, 4
+    62 0000008D BB01000000              mov ebx, 1
+    63 00000092 B9[00000000]            mov ecx, equation
+    64 00000097 BA08000000              mov edx, 8
+    65 0000009C CD80                    int 0x80
+    66                                 
+    67 0000009E B804000000              mov eax, 4
+    68 000000A3 BB01000000              mov ebx, 1
+    69 000000A8 B9[00000000]            mov ecx, prompt2
+    70 000000AD BA08000000              mov edx, 8
+    71 000000B2 CD80                    int 0x80
+    72                                 
+    73 000000B4 B804000000              mov eax, 4
+    74 000000B9 BB01000000              mov ebx, 1
+    75 000000BE 89C1                    mov ecx, eax
+    76 000000C0 BA04000000              mov edx, 4
+    77 000000C5 CD80                    int 0x80
+    78                                 
+    79 000000C7 B801000000              mov eax, 1
+    80 000000CC BB00000000              mov ebx, 0
+    81 000000D1 CD80                    int 0x80
