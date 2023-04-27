@@ -20,6 +20,12 @@
 	syscall       ; Calling system services
 %endmacro
 
+%macro operate 2
+	mov rbx, %1 
+	mov rcx, %2 
+	
+%endmacro
+
 ;; ---------------------------------- ;;
 ;;  																	;;
 ;;       UNINITIALIZED VARIABLES      ;;
