@@ -1,8 +1,12 @@
 ;; ---------------------------------- ;;
-;;  																	;;
+;;  								  ;;
 ;;         MACROS FOR PROGRAM         ;;
-;; 																		;;
+;; 	   								  ;;
 ;; ---------------------------------- ;;
+
+;; ------------ ;;
+;; OUTPUTSTREAM ;;
+;; ------------ ;;
 
 %macro ostream 2
 	mov rax, 1    ; SYS_Write
@@ -12,6 +16,9 @@
 	syscall       ; Calling system services
 %endmacro
 
+;; ------------ ;;
+;; INPUTSTREAM  ;;
+;; ------------ ;;
 %macro istream 2
 	mov rax, 0    ; SYS_Read
 	mov rdi, 0    ; Read from STD_IN
@@ -20,64 +27,135 @@
 	syscall       ; Calling system services
 %endmacro
 
+;; --------------- ;;
+;; OPERATION LOGIC ;;
+;; --------------- ;; 
+
 %macro operate 2
-	mov rbx, %1 
-	mov rcx, %2 
+	mov ebx, %1 
+	mov ecx, %2 
+
+	cmp ebx, ADD_OPERATOR
+	je addition
 	
+	cmp ebx, SUB_OPERATOR
+	je subtraction 
+
+	cmp ebx, MUL_OPERATOR
+	je multiplication
+
+	cmp ebx, DIV_OPERATOR
+	je divide
 %endmacro
 
 ;; ---------------------------------- ;;
-;;  																	;;
+;;  								  ;;
 ;;       UNINITIALIZED VARIABLES      ;;
-;; 																		;;
+;; 									  ;;
 ;; ---------------------------------- ;;
 
 section .bss
+	result   resq 100
 	equation resq 100 
 	ascii    resq 100
 	buffer   resq 100
 
 ;; ---------------------------------- ;;
-;;  																	;;
-;;         DATA SECTIONS              ;;
-;; 																		;;
+;;  							      ;;
+;;         DATA SECTION               ;;
+;; 									  ;;
 ;; ---------------------------------- ;;
 
 section .data
-	; -----
-	; CONSTANTS
+	; --------- ; 
+	; CONSTANTS ; 
+	; --------- ; 
+	ADD_OPERATOR equ '+' 
+	SUB_OPERATOR equ '-' 
+	MUL_OPERATOR equ '*' 
+	DIV_OPERATOR equ '/'
 	EXIT_SUCCESS equ 0
 	SYS_EXIT     equ 60
 
-	; -----
-	; Intro Message
-	intromsg db 0dh, 0ah, 0dh, 0ah, " ************************* Welcome to CLI Calculator ************************* ", 0dh, 0ah, 0dh, 0ah
+	; ------------- ; 
+	; INTRO MESSAGE ;
+	; ------------- ;
+	intromsg db 0dh, 0ah, 0dh, 0ah, " ************************* Welcome to CLI Calculator ************************* ", 0dh, 0ah, 0dh, 0ah 
 	introlen equ $-intromsg
 
-	; -----
-	; Prompt Message
-	promptmsg db 0dh, 0ah, " Please enter the Equation that you want evaluated (Don't user any spaces!): "
+	; -------------- ; 
+	; PROMPT MESSAGE ;
+	; -------------- ; 
+	promptmsg db 0dh, 0ah, " Please enter the Equation that you want evaluated (Don't use any spaces!): "
 	promptlen equ $-promptmsg
 
-	; -----
-	; Result Message
-	resultmsg db 0dh, 0ah, " has a result of: "
+	; -------------- ;
+	; RESULT MESSAGE ;
+	; -------------- ;
+	resultmsg db " has a result of: "
 	resultlen equ $-resultmsg
+
+	; ---------------- ; 
+	; CONTINUE MESSAGE ; 
+	; ---------------- ; 
+	continuemsg db 0dh, 0ah, " Do you want to continue (Y/N)? "
+	continuelen equ $-continuemsg
+
+	; ----------- ; 
+	; END MESSAGE ; 
+	; ----------- ; 
+	endmsg db 0dh, 0ah, 0dh, 0ah, " ************************* Thank You for Using Me ************************* ", 0dh, 0ah, 0dh, 0ah 
+	endlen equ $-endmsg
 
 
 section .text
 	global _start
 
 _start: 
-	mov r10, 0 
+	mov r10, 1
 
 ;; ---------------------------------- ;;
-;;  																	;;
-;;         PROGRAM START LOOP         ;;
-;; 																		;;
+;;  					     		  ;;
+;;       OPERATION FUNCTIONS          ;;
+;; 									  ;;
+;; ---------------------------------- ;;
+
+; ------------- ; 
+; ADDITION FUNC ; 
+; ------------- ;
+addition: 
+	add eax, ecx 
+	jmp CONTINUE
+
+; ---------------- ; 
+; SUBTRACTION FUNC ;
+; ---------------- ; 
+subtraction: 
+	sub eax, ecx 
+	jmp CONTINUE
+
+; ------------------- ;
+; MULTIPLICATION FUNC ; 
+; ------------------- ; 
+multiplication: 
+	mul ecx 
+	jmp CONTINUE
+
+; ------------- ;
+; DIVISION FUNC ; 
+; ------------- ;
+divide: 
+	div ecx
+	jmp CONTINUE
+
+;; ---------------------------------- ;;
+;;  					     		  ;;
+;;       PROGRAM START LOOP           ;;
+;; 									  ;;
 ;; ---------------------------------- ;;
 
 START: 
+	; OUTPUT STARTER 
 	ostream intromsg  , introlen 
 	ostream promptmsg , promptlen
 	istream buffer    , 100
@@ -87,8 +165,69 @@ START:
 	mov al             , 0fh
 	mov byte[equation] , al
 
-	; RESULT OUPUT 
-	ostream buffer, 100
+	; --------------------------- ; 
+	; QUICK CONVERT CHAR TO ASCII ;
+	; e.x. "1" -> 48 - 47 <- "0"  ;
+	; --------------------------- ; 
+	movzx eax , byte[buffer]
+	sub   eax , "0"
+	
+	call LOOP
+
+;; ---------------------------------- ;;
+;;  					     		  ;;
+;;           RESULT OUTPUT            ;;
+;; 									  ;;
+;; ---------------------------------- ;;
+
+RESULT: 
+	mov     result    , eax
+	ostream buffer    , 100
+	ostream resultmsg , resultlen 
+
+PROMPT: 
+	ostream continuemsg , continuelen
+	istream buffer      , 100 
+	movzx   edx         , byte[buffer]
+	cmp     edx         , "Y"
+	je      RESET
+
+	jmp exit
+
+;; ---------------------------------- ;;
+;;  					     		  ;;
+;;           RESET PROGRAM TO         ;;
+;; 		   LOOP THROUGH AGAIN         ;;
+;; 									  ;;
+;; ---------------------------------- ;;
+
+RESET:
+	ostream endmsg, endlen
+	mov     buffer, 0 
+	mov     eax   , 0 
+	mov     edx   , 0 
+	mov     al    , 0 
+	mov     r10   , 1 
+	jmp START
+	
+;; ---------------------------------- ;;
+;;  					     		  ;;
+;;           OPERATION LOOP           ;;
+;; 									  ;;
+;; ---------------------------------- ;;
+
+LOOP: 
+	mov al, [buffer+r10] 
+	operate al, al+1
+
+CONTINUE:
+	add r10, 2 
+	cmp al, 10 
+	jne LOOP
+
+	jmp RESULT
+
+	
 
 
 exit: 
