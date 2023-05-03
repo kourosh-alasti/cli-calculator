@@ -172,7 +172,7 @@ START:
 	movzx eax , byte[buffer]
 	sub   eax , "0"
 	
-	call LOOP
+	jmp   LOOPER
 
 ;; ---------------------------------- ;;
 ;;  					     		  ;;
@@ -181,18 +181,17 @@ START:
 ;; ---------------------------------- ;;
 
 RESULT: 
-	mov     result    , eax
-	ostream buffer    , 100
+	;mov     result    , eax
+	; ostream buffer    , 100
 	ostream resultmsg , resultlen 
 
 PROMPT: 
 	ostream continuemsg , continuelen
 	istream buffer      , 100 
-	movzx   edx         , byte[buffer]
-	cmp     edx         , "Y"
+	movzx   eax         , byte[buffer]
+	cmp     eax         , "Y"
 	je      RESET
-
-	jmp exit
+	jmp     exit
 
 ;; ---------------------------------- ;;
 ;;  					     		  ;;
@@ -203,12 +202,12 @@ PROMPT:
 
 RESET:
 	ostream endmsg, endlen
-	mov     buffer, 0 
+	;mov     buffer, 0 
 	mov     eax   , 0 
 	mov     edx   , 0 
 	mov     al    , 0 
 	mov     r10   , 1 
-	jmp START
+	jmp     START
 	
 ;; ---------------------------------- ;;
 ;;  					     		  ;;
@@ -216,15 +215,17 @@ RESET:
 ;; 									  ;;
 ;; ---------------------------------- ;;
 
-LOOP: 
-	mov al, [buffer+r10] 
-	operate al, al+1
+LOOPER: 
+	mov al, byte[buffer+r10] 
+	inc r10
+	operate al, byte[buffer+r10]
 
 CONTINUE:
-	add r10, 2 
+	inc r10 
 	cmp al, 10 
-	jne LOOP
-
+	jne LOOPER
+	mov result, eaxs
+	ostream result, 100
 	jmp RESULT
 
 	
