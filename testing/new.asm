@@ -100,7 +100,7 @@ check_input:
 	movzx eax, byte[buffer]
 	;sub rax, "0" 
 
-	inc r8d 
+	
 	mov r9d, [buffer+r8d]
 	inc r8d 
 	mov r10d, [buffer+r8d]
@@ -115,9 +115,10 @@ continue_prog:
 	print results, resultslen
 	print buffer, 100
 
-	add rdi, ZERO
-	mov qword[buffer], rdi
-	print buffer, 100
+	;add rdi, ZERO
+	add qword[result], ZERO
+	print result, 2
+
 	
 	;print result, 100
 	;print rax , 100
