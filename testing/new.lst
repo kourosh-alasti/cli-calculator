@@ -1,0 +1,144 @@
+     1                                 %line 19+1 new.asm
+     2                                 
+     3                                 %line 27+1 new.asm
+     4                                 
+     5                                 %line 35+1 new.asm
+     6                                 
+     7                                 
+     8                                 
+     9                                 addition:
+    10 00000000 01C8                    add eax, ecx
+    11 00000002 E99D000000              jmp continue_prog
+    12                                 
+    13                                 subtraction:
+    14 00000007 29C8                    sub eax, ecx
+    15 00000009 E996000000              jmp continue_prog
+    16                                 
+    17                                 multiplication:
+    18 0000000E F7E1                    mul ecx
+    19 00000010 E98F000000              jmp continue_prog
+    20                                 
+    21                                 division:
+    22 00000015 F7F1                    div ecx
+    23 00000017 E988000000              jmp continue_prog
+    24                                 
+    25                                 
+    26                                 [section .bss]
+    27                                 
+    28 00000000 <gap>                   buffer resq 100
+    29                                 
+    30 00000320 <gap>                   result resq 100
+    31                                 
+    32                                 
+    33 00000640 00                      symbol_temp db 0
+    34 00000641 00                      number_temp db 0
+    35                                 
+    36                                 [section .data]
+    37                                 
+    38                                  SYS_EXIT equ 60
+    39                                  EXIT_SUCCESS equ 0
+    40                                 
+    41                                  ADD_OPER equ '+'
+    42                                  SUB_OPER equ '-'
+    43                                  MUL_OPER equ '*'
+    44                                  DIV_OPER equ '/'
+    45                                 
+    46                                 
+    47 00000000 456E74657220616E20-     msg db "Enter an equation: "
+    48 00000000 6571756174696F6E3A-
+    49 00000000 20                 
+    50                                  msglen equ $-msg
+    51                                 
+    52 00000013 526573756C743A20        results db "Result: "
+    53                                  resultslen equ $-results
+    54                                 
+    55                                 [section .text]
+    56                                 [global _start]
+    57                                 
+    58                                 _start:
+    59 0000001C 41B801000000            mov r8d, 1
+    60                                 
+    61                                 beginning:
+    62 00000022 48C7C001000000          mov rax, 1
+    63                                 %line 89+0 new.asm
+    64 00000029 48C7C701000000          mov rdi, 1
+    65 00000030 48C7C6[00000000]        mov rsi, msg
+    66 00000037 48BA13000000000000-     mov rdx, msglen
+    67 00000037 00                 
+    68 00000041 0F05                    syscall
+    69                                 %line 90+1 new.asm
+    70 00000043 48C7C000000000          mov rax, 0
+    71                                 %line 90+0 new.asm
+    72 0000004A 48C7C700000000          mov rdi, 0
+    73 00000051 48C7C6[00000000]        mov rsi, buffer
+    74 00000058 48C7C264000000          mov rdx, 100
+    75 0000005F 0F05                    syscall
+    76                                 %line 91+1 new.asm
+    77                                 
+    78                                 check_input:
+    79 00000061 0FB60425[00000000]      movzx eax, byte[buffer]
+    80                                 
+    81                                 
+    82 00000069 41FFC0                  inc r8d
+    83 0000006C 67458B88[00000000]      mov r9d, [buffer+r8d]
+    84 00000074 41FFC0                  inc r8d
+    85 00000077 67458B90[00000000]      mov r10d, [buffer+r8d]
+    86                                 
+    87                                 
+    88                                 %line 101+0 new.asm
+    89 0000007F 4489CB                  mov ebx, r9d
+    90                                 
+    91 00000082 4489D1                  mov ecx, r10d
+    92                                 
+    93 00000085 83FB2B                  cmp ebx, ADD_OPER
+    94 00000088 0F846CFFFFFF            je addition
+    95                                 
+    96 0000008E 83FB2D                  cmp ebx, SUB_OPER
+    97 00000091 0F846AFFFFFF            je subtraction
+    98                                 
+    99 00000097 83FB2A                  cmp ebx, MUL_OPER
+   100 0000009A 0F8468FFFFFF            je multiplication
+   101                                 
+   102 000000A0 83FB2F                  cmp ebx, DIV_OPER
+   103 000000A3 0F8466FFFFFF            je division
+   104                                 %line 102+1 new.asm
+   105                                 
+   106                                 continue_prog:
+   107                                 
+   108                                 
+   109 000000A9 890425[00000000]        mov [result], eax
+   110                                 
+   111 000000B0 48C7C001000000          mov rax, 1
+   112                                 %line 108+0 new.asm
+   113 000000B7 48C7C701000000          mov rdi, 1
+   114 000000BE 48C7C6[00000000]        mov rsi, results
+   115 000000C5 48BA08000000000000-     mov rdx, resultslen
+   116 000000C5 00                 
+   117 000000CF 0F05                    syscall
+   118                                 %line 109+1 new.asm
+   119 000000D1 48C7C001000000          mov rax, 1
+   120                                 %line 109+0 new.asm
+   121 000000D8 48C7C701000000          mov rdi, 1
+   122 000000DF 48C7C6[00000000]        mov rsi, result
+   123 000000E6 48C7C264000000          mov rdx, 100
+   124 000000ED 0F05                    syscall
+   125                                 %line 110+1 new.asm
+   126                                 
+   127                                 
+   128                                 
+   129                                 
+   130                                 
+   131                                 
+   132                                 
+   133                                 
+   134                                 
+   135                                 
+   136                                 exit:
+   137 000000EF 48C7C03C000000          mov rax, SYS_EXIT
+   138 000000F6 48C7C700000000          mov rdi, EXIT_SUCCESS
+   139 000000FD 0F05                    syscall
+   140                                 
+   141                                 
+   142                                 
+   143                                 
+   144                                 
