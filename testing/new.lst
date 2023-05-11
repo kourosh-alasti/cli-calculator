@@ -43,102 +43,109 @@
     43                                  MUL_OPER equ '*'
     44                                  DIV_OPER equ '/'
     45                                 
-    46                                 
-    47 00000000 456E74657220616E20-     msg db "Enter an equation: "
-    48 00000000 6571756174696F6E3A-
-    49 00000000 20                 
-    50                                  msglen equ $-msg
-    51                                 
-    52 00000013 526573756C743A20        results db "Result: "
-    53                                  resultslen equ $-results
-    54                                 
-    55                                 [section .text]
-    56                                 [global _start]
-    57                                 
-    58                                 _start:
-    59 0000001C 41B801000000            mov r8d, 1
-    60                                 
-    61                                 beginning:
-    62 00000022 48C7C001000000          mov rax, 1
-    63                                 %line 89+0 new.asm
-    64 00000029 48C7C701000000          mov rdi, 1
-    65 00000030 48C7C6[00000000]        mov rsi, msg
-    66 00000037 48BA13000000000000-     mov rdx, msglen
-    67 00000037 00                 
-    68 00000041 0F05                    syscall
-    69                                 %line 90+1 new.asm
-    70 00000043 48C7C000000000          mov rax, 0
-    71                                 %line 90+0 new.asm
-    72 0000004A 48C7C700000000          mov rdi, 0
-    73 00000051 48C7C6[00000000]        mov rsi, buffer
-    74 00000058 48C7C264000000          mov rdx, 100
-    75 0000005F 0F05                    syscall
-    76                                 %line 91+1 new.asm
-    77                                 
-    78                                 check_input:
-    79 00000061 0FB60425[00000000]      movzx eax, byte[buffer]
-    80                                 
-    81                                 
-    82 00000069 41FFC0                  inc r8d
-    83 0000006C 67458B88[00000000]      mov r9d, [buffer+r8d]
-    84 00000074 41FFC0                  inc r8d
-    85 00000077 67458B90[00000000]      mov r10d, [buffer+r8d]
-    86                                 
+    46                                  ZERO equ 48
+    47                                 
+    48 00000000 30303030303030300A      ascii db "00000000", 10
+    49                                 
+    50                                 
+    51 00000009 456E74657220616E20-     msg db "Enter an equation: "
+    52 00000009 6571756174696F6E3A-
+    53 00000009 20                 
+    54                                  msglen equ $-msg
+    55                                 
+    56 0000001C 526573756C743A20        results db "Result: "
+    57                                  resultslen equ $-results
+    58                                 
+    59                                 [section .text]
+    60                                 [global _start]
+    61                                 
+    62                                 _start:
+    63 0000001C 41B801000000            mov r8d, 1
+    64                                 
+    65                                 
+    66                                 
+    67                                 
+    68                                 beginning:
+    69 00000022 48C7C001000000          mov rax, 1
+    70                                 %line 96+0 new.asm
+    71 00000029 48C7C701000000          mov rdi, 1
+    72 00000030 48C7C6[00000000]        mov rsi, msg
+    73 00000037 48BA13000000000000-     mov rdx, msglen
+    74 00000037 00                 
+    75 00000041 0F05                    syscall
+    76                                 %line 97+1 new.asm
+    77 00000043 48C7C000000000          mov rax, 0
+    78                                 %line 97+0 new.asm
+    79 0000004A 48C7C700000000          mov rdi, 0
+    80 00000051 48C7C6[00000000]        mov rsi, buffer
+    81 00000058 48C7C264000000          mov rdx, 100
+    82 0000005F 0F05                    syscall
+    83                                 %line 98+1 new.asm
+    84                                 
+    85                                 check_input:
+    86 00000061 0FB60425[00000000]      movzx eax, byte[buffer]
     87                                 
-    88                                 %line 101+0 new.asm
-    89 0000007F 4489CB                  mov ebx, r9d
-    90                                 
-    91 00000082 4489D1                  mov ecx, r10d
-    92                                 
-    93 00000085 83FB2B                  cmp ebx, ADD_OPER
-    94 00000088 0F846CFFFFFF            je addition
-    95                                 
-    96 0000008E 83FB2D                  cmp ebx, SUB_OPER
-    97 00000091 0F846AFFFFFF            je subtraction
-    98                                 
-    99 00000097 83FB2A                  cmp ebx, MUL_OPER
-   100 0000009A 0F8468FFFFFF            je multiplication
-   101                                 
-   102 000000A0 83FB2F                  cmp ebx, DIV_OPER
-   103 000000A3 0F8466FFFFFF            je division
-   104                                 %line 102+1 new.asm
+    88                                 
+    89 00000069 41FFC0                  inc r8d
+    90 0000006C 67458B88[00000000]      mov r9d, [buffer+r8d]
+    91 00000074 41FFC0                  inc r8d
+    92 00000077 67458B90[00000000]      mov r10d, [buffer+r8d]
+    93                                 
+    94                                 
+    95                                 %line 108+0 new.asm
+    96 0000007F 4489CB                  mov ebx, r9d
+    97                                 
+    98 00000082 4489D1                  mov ecx, r10d
+    99                                 
+   100 00000085 83FB2B                  cmp ebx, ADD_OPER
+   101 00000088 0F846CFFFFFF            je addition
+   102                                 
+   103 0000008E 83FB2D                  cmp ebx, SUB_OPER
+   104 00000091 0F846AFFFFFF            je subtraction
    105                                 
-   106                                 continue_prog:
-   107                                 
+   106 00000097 83FB2A                  cmp ebx, MUL_OPER
+   107 0000009A 0F8468FFFFFF            je multiplication
    108                                 
-   109 000000A9 890425[00000000]        mov [result], eax
-   110                                 
-   111 000000B0 48C7C001000000          mov rax, 1
-   112                                 %line 108+0 new.asm
-   113 000000B7 48C7C701000000          mov rdi, 1
-   114 000000BE 48C7C6[00000000]        mov rsi, results
-   115 000000C5 48BA08000000000000-     mov rdx, resultslen
-   116 000000C5 00                 
-   117 000000CF 0F05                    syscall
-   118                                 %line 109+1 new.asm
-   119 000000D1 48C7C001000000          mov rax, 1
-   120                                 %line 109+0 new.asm
-   121 000000D8 48C7C701000000          mov rdi, 1
-   122 000000DF 48C7C6[00000000]        mov rsi, result
-   123 000000E6 48C7C264000000          mov rdx, 100
-   124 000000ED 0F05                    syscall
-   125                                 %line 110+1 new.asm
-   126                                 
-   127                                 
-   128                                 
-   129                                 
-   130                                 
-   131                                 
-   132                                 
+   109 000000A0 83FB2F                  cmp ebx, DIV_OPER
+   110 000000A3 0F8466FFFFFF            je division
+   111                                 %line 109+1 new.asm
+   112                                 
+   113                                 continue_prog:
+   114                                 
+   115                                 
+   116 000000A9 890425[00000000]        mov [result], eax
+   117                                 
+   118 000000B0 48C7C001000000          mov rax, 1
+   119                                 %line 115+0 new.asm
+   120 000000B7 48C7C701000000          mov rdi, 1
+   121 000000BE 48C7C6[00000000]        mov rsi, results
+   122 000000C5 48BA08000000000000-     mov rdx, resultslen
+   123 000000C5 00                 
+   124 000000CF 0F05                    syscall
+   125                                 %line 116+1 new.asm
+   126 000000D1 48C7C001000000          mov rax, 1
+   127                                 %line 116+0 new.asm
+   128 000000D8 48C7C701000000          mov rdi, 1
+   129 000000DF 48C7C6[00000000]        mov rsi, buffer
+   130 000000E6 48C7C264000000          mov rdx, 100
+   131 000000ED 0F05                    syscall
+   132                                 %line 117+1 new.asm
    133                                 
-   134                                 
-   135                                 
-   136                                 exit:
-   137 000000EF 48C7C03C000000          mov rax, SYS_EXIT
-   138 000000F6 48C7C700000000          mov rdi, EXIT_SUCCESS
-   139 000000FD 0F05                    syscall
-   140                                 
-   141                                 
-   142                                 
+   134 000000EF 4883C730                add rdi, ZERO
+   135 000000F3 48893C25[00000000]      mov qword[buffer], rdi
+   136 000000FB 48C7C001000000          mov rax, 1
+   137                                 %line 120+0 new.asm
+   138 00000102 48C7C701000000          mov rdi, 1
+   139 00000109 48C7C6[00000000]        mov rsi, buffer
+   140 00000110 48C7C264000000          mov rdx, 100
+   141 00000117 0F05                    syscall
+   142                                 %line 121+1 new.asm
    143                                 
    144                                 
+   145                                 
+   146                                 
+   147                                 exit:
+   148 00000119 48C7C03C000000          mov rax, SYS_EXIT
+   149 00000120 48C7C700000000          mov rdi, EXIT_SUCCESS
+   150 00000127 0F05                    syscall
+   151                                 

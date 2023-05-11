@@ -71,6 +71,10 @@ section .data
 	SUB_OPER     equ '-'
 	MUL_OPER     equ '*'
 	DIV_OPER     equ '/'
+
+	ZERO         equ 48
+
+	ascii  db "00000000", 10
 		
 
 	msg    db  "Enter an equation: "
@@ -84,6 +88,9 @@ section .text
 
 _start: 
 	mov r8d, 1
+
+
+
 
 beginning: 
 	print msg    , msglen
@@ -106,10 +113,17 @@ continue_prog:
 	mov [result], eax
 
 	print results, resultslen
-	print result, 100
-	;print rax , 100
+	print buffer, 100
+
+	add rdi, ZERO
+	mov qword[buffer], rdi
+	print buffer, 100
 	
+	;print result, 100
+	;print rax , 100
+
 exit: 
 	mov rax, SYS_EXIT
 	mov rdi, EXIT_SUCCESS
 	syscall
+
