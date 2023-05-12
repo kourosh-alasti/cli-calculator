@@ -1,3 +1,12 @@
+;; ---------------------------------- ;;
+;;  								                  ;;
+;;         MACROS FOR PROGRAM         ;;
+;; 	   								                ;;
+;; ---------------------------------- ;;
+
+;; ------------ ;;
+;; OUTPUTSTREAM ;;
+;; ------------ ;;
 %macro ostream 2
 	mov rax, 1
 	mov rdi, 1
@@ -6,6 +15,9 @@
 	syscall
 %endmacro
 
+;; ------------ ;;
+;; INPUTSTREAM  ;;
+;; ------------ ;;
 %macro istream 2
 	mov rax, 0 
 	mov rdi, 0 
@@ -14,8 +26,11 @@
 	syscall
 %endmacro
 
+;; --------------- ;;
+;; OPERATION LOGIC ;;
+;; --------------- ;; 
 %macro check 1
-	mov ax, %1 
+	mov ax, [%1] 
 
 	cmp ax, ADD_OPER
 	je addition
@@ -34,14 +49,27 @@
 	;
 %endmacro
 
+;; ---------------------------------- ;;
+;;  								                  ;;
+;;       UNINITIALIZED VARIABLES      ;;
+;; 									                  ;;
+;; ---------------------------------- ;;
 section .bss
-	buffer  resb 10
-	num_one resb 1
-	num_two resb 1
-	symbol  resb 1
-	result  resb 10
+	buffer   resb 9
+	temp_num resb 1
+	symbol   resb 1
+	result   resb 10
+
+;; ---------------------------------- ;;
+;;  							                    ;;
+;;         DATA SECTION               ;;
+;; 									                  ;;
+;; ---------------------------------- ;;
 
 section .data
+	; --------- ; 
+	; CONSTANTS ; 
+	; --------- ; 
 	SYS_EXIT     equ 60
 	EXIT_SUCCESS equ 0
 	ADD_OPER	   equ '+'
@@ -49,67 +77,127 @@ section .data
 	MUL_OPER     equ '*'
 	DIV_OPER     equ '/'
 
-	intro_msg db  "Enter an equation: "
-	intro_len equ $-intro_msg
+	; ------------- ; 
+	; ASCII OUPUT   ;
+	; ------------- ;
+	ascii db  "0000000", 10
 
-	ascii     db  "0000000", 10
+
+	; ------------- ; 
+	; INTRO MESSAGE ;
+	; ------------- ;
+	intromsg db 0dh, 0ah, 0dh, 0ah, " ************************* Welcome to CLI Calculator ************************* ", 0dh, 0ah, 0dh, 0ah 
+	introlen equ $-intromsg
+
+	; -------------- ; 
+	; PROMPT MESSAGE ;
+	; -------------- ; 
+	promptmsg db 0dh, 0ah, " Please enter the Equation that you want evaluated (Don't use any spaces!): "
+	promptlen equ $-promptmsg
+
+	; -------------- ;
+	; RESULT MESSAGE ;
+	; -------------- ;
+	resultmsg db " has a result of: "
+	resultlen equ $-resultmsg
+
+	; ---------------- ; 
+	; CONTINUE MESSAGE ; 
+	; ---------------- ; 
+	continuemsg db 0dh, 0ah, " Do you want to continue (Y/N)? "
+	continuelen equ $-continuemsg
+
+	; ----------- ; 
+	; END MESSAGE ; 
+	; ----------- ; 
+	endmsg db 0dh, 0ah, 0dh, 0ah, " ************************* Thank You for Using Me ************************* ", 0dh, 0ah, 0dh, 0ah 
+	endlen equ $-endmsg
+
+	
 
 section .text
 	global _start
 
 _start: 
-	mov r10, 1
+	mov r10, 2
 
 program: 
-	ostream intro_msg, intro_len
+	ostream promptmsg, promptlen
 	istream buffer   , r10
 
-	mov al            , [buffer+r10*0]
-	and al		        , 0fh 
-	mov byte[num_one] , al 
+	mov al             , [buffer]
+	and al		         , 0fh 
+	mov byte[result]   , al 
 
-	mov al            , [buffer+r10]
+	mov al            , [buffer+1]
 	mov byte[symbol]  , al
 
-	mov al            , [buffer+r10*2]
+	mov al            , [buffer+r10]
 	and al            , 0fh
-	mov byte[num_two] , al 
- 
-	mov al            , byte[num_one] 
-	mov byte[result]  , al
+	mov byte[temp_num] , al 
+
+	mov al, byte[result] 
+	mov bl, byte[buffer+r10]
+
+	check symbol
 
 loop_one: 
-	mov al, byte[result] 
-	mov bl, byte[num_two]
+	mov al, byte[buffer+r10+1]
+	mov byte[symbol], al
+	mov al, byte[result]
+	mov bl, byte[buffer+r10*2]
 
 	check symbol
 
 display: 
+	inc r10
+	mov bl, byte[buffer+r10*2]
+	cmp bl, 10
+	jne loop_one
+
 	mov al, byte[result]
 	add byte[ascii], al 
 	ostream ascii, 2
 
 exit: 
-	mov rax, SYS_EXIT
-	mov rdi, EXIT_SUCCESS
+	mov rax, SYS_EXIT      ; Call code for exit
+	mov rdi, EXIT_SUCCESS  ; Exit program with success
 	syscall
 
 
+;; ---------------------------------- ;;
+;;  					     		                ;;
+;;       OPERATION FUNCTIONS          ;;
+;; 									                  ;;
+;; ---------------------------------- ;;
+
+; ------------- ; 
+; ADDITION FUNC ; 
+; ------------- ;
 addition: 	
 	add al, bl 
 	mov byte[result], al
 	jmp display 
 
+; ---------------- ; 
+; SUBTRACTION FUNC ;
+; ---------------- ;
 subtraction: 	
 	sub al, bl
 	mov byte[result], al 
 	jmp display
 
+; ------------------- ;
+; MULTIPLICATION FUNC ; 
+; ------------------- ;
 multiplication: 
 	mul bl 
 	mov byte[result], al 
 	jmp display
 
+; ------------- ;
+; DIVISION FUNC ; 
+; ------------- ;
 division: 
 	mov ah, 0 
 	div bl 
