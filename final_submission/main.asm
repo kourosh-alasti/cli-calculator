@@ -1,53 +1,58 @@
-%macro istream 2
-	mov rax, 0
-	mov rdi, 0
-	mov rsi, %1
-	mov rdx, %2
-	syscall
-%endmacro
-
 %macro ostream 2
-	mov rax, 1 
+	mov rax, 1
 	mov rdi, 1
 	mov rsi, %1
 	mov rdx, %2
 	syscall
 %endmacro
 
-%macro oper 2
-	mov rbx, %1
-	mov rcx, %2
+%macro istream 2
+	mov rax, 0 
+	mov rdi, 0 
+	mov rsi, %1
+	mov rdx, %2
+	syscall
+%endmacro
 
-	cmp rbx, ADD_OPER
+%macro check 1
+	mov ax, %1 
+
+	cmp ax, ADD_OPER
 	je addition
 
-	cmp rbx, SUB_OPER
+	cmp ax, SUB_OPER
 	je subtraction
 
-	cmp rbx, MUL_OPER
+	cmp ax, MUL_OPER
 	je multiplication
 
-	cmp rbx, DIV_OPER
-	je multiplication
+	cmp ax, DIV_OPER
+	je division
+
+	;
+	;	ERROR HANDLING
+	;
 %endmacro
 
 section .bss
-	buffer   resq 100
-	equation resq 100
-	ascii    resq 100
-	result   resq 0 
+	buffer  resb 10
+	num_one resb 1
+	num_two resb 1
+	symbol  resb 1
+	result  resb 10
 
 section .data
-	ADD_OPER equ '+'
-	SUB_OPER equ '-' 
-	MUL_OPER equ '*' 
-	DIV_OPER equ '/'
-
-	EXIT_SUCCESS equ 0 
 	SYS_EXIT     equ 60
+	EXIT_SUCCESS equ 0
+	ADD_OPER	   equ '+'
+	SUB_OPER     equ '-'
+	MUL_OPER     equ '*'
+	DIV_OPER     equ '/'
 
-	msg    db  "Enter Equation: "
-	msglen equ $-msg
+	intro_msg db  "Enter an equation: "
+	intro_len equ $-intro_msg
+
+	ascii     db  "0000000", 10
 
 section .text
 	global _start
@@ -55,58 +60,58 @@ section .text
 _start: 
 	mov r10, 1
 
-addition: 
-	add rax, rcx
-	mov qword[result], rax
-	jmp continue
+program: 
+	ostream intro_msg, intro_len
+	istream buffer   , r10
 
-subtraction: 
-	sub rax, rcx
-	mov qword[result], rax
-	jmp continue
+	mov al            , [buffer+r10*0]
+	and al		        , 0fh 
+	mov byte[num_one] , al 
 
-multiplication: 
-	mul rcx
-	mov qword[result], rax
-	jmp continue
+	mov al            , [buffer+r10]
+	mov byte[symbol]  , al
 
-division: 
-	div rcx
-	mov qword[result], rax
-	jmp continue
+	mov al            , [buffer+r10*2]
+	and al            , 0fh
+	mov byte[num_two] , al 
+ 
+	mov al            , byte[num_one] 
+	mov byte[result]  , al
 
+loop_one: 
+	mov al, byte[result] 
+	mov bl, byte[num_two]
 
-startprogram:
-	ostream msg    , msglen
-	istream buffer , 100
+	check symbol
 
-	movzx rax, byte[buffer] 
-	sub   rax, "0"
-
-	jmp runloop
-
-runloop:
-	mov rdx, qword[buffer+r10] 
-	inc r10 
-	oper rdx, qword[buffer+r10]
-
-continue: 
-	inc r10 
-	cmp rdx, 10 
-	jne runloop 
-
-	mov ah, 0 
+display: 
 	mov al, byte[result]
-	mov bl, 10
-	div bl 
-
-	add byte[ascii+0], al 
-	add byte[ascii+1], ah 
-	mov word[ascii+2], 10
-
-	ostream ascii, 100
+	add byte[ascii], al 
+	ostream ascii, 2
 
 exit: 
 	mov rax, SYS_EXIT
 	mov rdi, EXIT_SUCCESS
 	syscall
+
+
+addition: 	
+	add al, bl 
+	mov byte[result], al
+	jmp display 
+
+subtraction: 	
+	sub al, bl
+	mov byte[result], al 
+	jmp display
+
+multiplication: 
+	mul bl 
+	mov byte[result], al 
+	jmp display
+
+division: 
+	mov ah, 0 
+	div bl 
+	mov byte[result], al 
+	jmp display

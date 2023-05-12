@@ -2,120 +2,125 @@
      2                                 
      3                                 %line 16+1 main.asm
      4                                 
-     5                                 %line 33+1 main.asm
+     5                                 %line 36+1 main.asm
      6                                 
      7                                 [section .bss]
-     8 00000000 <gap>                   buffer resq 100
-     9 00000320 <gap>                   equation resq 100
-    10 00000640 <gap>                   ascii resq 100
-    11 00000960 <gap>                   result resq 0
-    12                                 
-    13                                 [section .data]
-    14                                  ADD_OPER equ '+'
-    15                                  SUB_OPER equ '-'
-    16                                  MUL_OPER equ '*'
-    17                                  DIV_OPER equ '/'
-    18                                 
-    19                                  EXIT_SUCCESS equ 0
-    20                                  SYS_EXIT equ 60
+     8 00000000 <gap>                   buffer resb 10
+     9 0000000A <gap>                   num_one resb 1
+    10 0000000B <gap>                   num_two resb 1
+    11 0000000C <gap>                   symbol resb 1
+    12 0000000D <gap>                   result resb 10
+    13                                 
+    14                                 [section .data]
+    15                                  SYS_EXIT equ 60
+    16                                  EXIT_SUCCESS equ 0
+    17                                  ADD_OPER equ '+'
+    18                                  SUB_OPER equ '-'
+    19                                  MUL_OPER equ '*'
+    20                                  DIV_OPER equ '/'
     21                                 
-    22 00000000 456E74657220457175-     msg db "Enter Equation: "
-    23 00000000 6174696F6E3A20     
-    24                                  msglen equ $-msg
-    25                                 
-    26                                 [section .text]
-    27                                 [global _start]
+    22 00000000 456E74657220616E20-     intro_msg db "Enter an equation: "
+    23 00000000 6571756174696F6E3A-
+    24 00000000 20                 
+    25                                  intro_len equ $-intro_msg
+    26                                 
+    27 00000013 303030303030300A        ascii db "0000000", 10
     28                                 
-    29                                 _start:
-    30 00000000 49C7C201000000          mov r10, 1
+    29                                 [section .text]
+    30                                 [global _start]
     31                                 
-    32                                 addition:
-    33 00000007 4801C8                  add rax, rcx
-    34 0000000A 48890425[00000000]      mov qword[result], rax
-    35 00000012 E9B5000000              jmp continue
-    36                                 
-    37                                 subtraction:
-    38 00000017 4829C8                  sub rax, rcx
-    39 0000001A 48890425[00000000]      mov qword[result], rax
-    40 00000022 E9A5000000              jmp continue
-    41                                 
-    42                                 multiplication:
-    43 00000027 48F7E1                  mul rcx
-    44 0000002A 48890425[00000000]      mov qword[result], rax
-    45 00000032 E995000000              jmp continue
-    46                                 
-    47                                 division:
-    48 00000037 48F7F1                  div rcx
-    49 0000003A 48890425[00000000]      mov qword[result], rax
-    50 00000042 E985000000              jmp continue
+    32                                 _start:
+    33 00000000 49C7C201000000          mov r10, 1
+    34                                 
+    35                                 program:
+    36 00000007 48C7C001000000          mov rax, 1
+    37                                 %line 64+0 main.asm
+    38 0000000E 48C7C701000000          mov rdi, 1
+    39 00000015 48C7C6[00000000]        mov rsi, intro_msg
+    40 0000001C 48BA13000000000000-     mov rdx, intro_len
+    41 0000001C 00                 
+    42 00000026 0F05                    syscall
+    43                                 %line 65+1 main.asm
+    44 00000028 48C7C000000000          mov rax, 0
+    45                                 %line 65+0 main.asm
+    46 0000002F 48C7C700000000          mov rdi, 0
+    47 00000036 48C7C6[00000000]        mov rsi, buffer
+    48 0000003D 4C89D2                  mov rdx, r10
+    49 00000040 0F05                    syscall
+    50                                 %line 66+1 main.asm
     51                                 
-    52                                 
-    53                                 startprogram:
-    54 00000047 48C7C001000000          mov rax, 1
-    55                                 %line 80+0 main.asm
-    56 0000004E 48C7C701000000          mov rdi, 1
-    57 00000055 48C7C6[00000000]        mov rsi, msg
-    58 0000005C 48BA10000000000000-     mov rdx, msglen
-    59 0000005C 00                 
-    60 00000066 0F05                    syscall
-    61                                 %line 81+1 main.asm
-    62 00000068 48C7C000000000          mov rax, 0
-    63                                 %line 81+0 main.asm
-    64 0000006F 48C7C700000000          mov rdi, 0
-    65 00000076 48C7C6[00000000]        mov rsi, buffer
-    66 0000007D 48C7C264000000          mov rdx, 100
-    67 00000084 0F05                    syscall
-    68                                 %line 82+1 main.asm
+    52 00000042 8A0425[00000000]        mov al , [buffer+r10*0]
+    53 00000049 240F                    and al , 0f
+    54 0000004B 880425[00000000]        mov byte[num_one] , al
+    55                                 
+    56 00000052 418A82[00000000]        mov al , [buffer+r10]
+    57 00000059 880425[00000000]        mov byte[symbol] , al
+    58                                 
+    59 00000060 438A8412[00000000]      mov al , [buffer+r10*2]
+    60 00000068 240F                    and al , 0f
+    61 0000006A 880425[00000000]        mov byte[num_two] , al
+    62                                 
+    63 00000071 8A0425[00000000]        mov al , byte[num_one]
+    64 00000078 880425[00000000]        mov byte[result] , al
+    65                                 
+    66                                 loopie:
+    67 0000007F 8A0425[00000000]        mov al, byte[result]
+    68 00000086 8A1C25[00000000]        mov bl, byte[num_two]
     69                                 
-    70 00000086 480FB60425[00000000]      movzx rax, byte[buffer]
-    71 0000008F 4883E830                sub rax, "0"
+    70 0000008D 66B8[0000]              mov ax, symbol
+    71                                 %line 85+0 main.asm
     72                                 
-    73 00000093 EBFE                    jmp runloop
-    74                                 
-    75                                 runloop:
-    76 00000095 498B92[00000000]        mov rdx, qword[buffer+r10]
-    77 0000009C 49FFC2                  inc r10
-    78 0000009F 4889D3                  mov rbx, rdx
-    79                                 %line 91+0 main.asm
-    80 000000A2 498B8A[00000000]        mov rcx, qword[buffer+r10]
+    73 00000091 6683F82B                cmp ax, ADD_OPER
+    74 00000095 744C                    je addition
+    75                                 
+    76 00000097 6683F82D                cmp ax, SUB_OPER
+    77 0000009B 7451                    je subtraction
+    78                                 
+    79 0000009D 6683F82A                cmp ax, MUL_OPER
+    80 000000A1 7456                    je multiplication
     81                                 
-    82 000000A9 4883FB2B                cmp rbx, ADD_OPER
-    83 000000AD 0F844EFFFFFF            je addition
+    82 000000A3 6683F82F                cmp ax, DIV_OPER
+    83 000000A7 745B                    je division
     84                                 
-    85 000000B3 4883FB2D                cmp rbx, SUB_OPER
-    86 000000B7 0F8454FFFFFF            je subtraction
+    85                                 
+    86                                 
     87                                 
-    88 000000BD 4883FB2A                cmp rbx, MUL_OPER
-    89 000000C1 0F845AFFFFFF            je multiplication
-    90                                 
-    91 000000C7 4883FB2F                cmp rbx, DIV_OPER
-    92 000000CB 0F8450FFFFFF            je multiplication
-    93                                 %line 92+1 main.asm
-    94                                 
-    95                                 continue:
-    96 000000D1 49FFC2                  inc r10
-    97 000000D4 4883FA0A                cmp rdx, 10
-    98 000000D8 75B9                    jne runloop
-    99                                 
-   100 000000DA B400                    mov ah, 0
-   101 000000DC 8A0425[00000000]        mov al, byte[result]
-   102 000000E3 B30A                    mov bl, 10
-   103 000000E5 F6F3                    div bl
-   104                                 
-   105 000000E7 000425[00000000]        add byte[ascii+0], al
-   106 000000EE 002425[01000000]        add byte[ascii+1], ah
-   107 000000F5 66C70425[02000000]-     mov word[ascii+2], 10
-   108 000000F5 0A00               
-   109                                 
-   110 000000FF 48C7C001000000          mov rax, 1
-   111                                 %line 107+0 main.asm
-   112 00000106 48C7C701000000          mov rdi, 1
-   113 0000010D 48C7C6[00000000]        mov rsi, ascii
-   114 00000114 48C7C264000000          mov rdx, 100
-   115 0000011B 0F05                    syscall
-   116                                 %line 108+1 main.asm
-   117                                 
-   118                                 exit:
-   119 0000011D 48C7C03C000000          mov rax, SYS_EXIT
-   120 00000124 48C7C700000000          mov rdi, EXIT_SUCCESS
-   121 0000012B 0F05                    syscall
+    88                                 %line 86+1 main.asm
+    89                                 
+    90                                 display:
+    91 000000A9 8A0425[00000000]        mov al, byte[result]
+    92 000000B0 000425[00000000]        add byte[ascii], al
+    93 000000B7 48C7C001000000          mov rax, 1
+    94                                 %line 90+0 main.asm
+    95 000000BE 48C7C701000000          mov rdi, 1
+    96 000000C5 48C7C6[00000000]        mov rsi, ascii
+    97 000000CC 48C7C202000000          mov rdx, 2
+    98 000000D3 0F05                    syscall
+    99                                 %line 91+1 main.asm
+   100                                 
+   101                                 exit:
+   102 000000D5 48C7C03C000000          mov rax, SYS_EXIT
+   103 000000DC 48C7C700000000          mov rdi, EXIT_SUCCESS
+   104 000000E3 0F05                    syscall
+   105                                 
+   106                                 
+   107                                 addition:
+   108 000000E5 00D8                    add al, bl
+   109 000000E7 880425[00000000]        mov byte[result], al
+   110 000000EE EBB7                    jmp display
+   111                                 
+   112                                 subtraction:
+   113 000000F0 28D8                    sub al, bl
+   114 000000F2 880425[00000000]        mov byte[result], al
+   115 000000F9 EBAC                    jmp display
+   116                                 
+   117                                 multiplication:
+   118 000000FB F6E3                    mul bl
+   119 000000FD 880425[00000000]        mov byte[result], al
+   120 00000104 EBA1                    jmp display
+   121                                 
+   122                                 division:
+   123 00000106 B400                    mov ah, 0
+   124 00000108 F6F3                    div bl
+   125 0000010A 880425[00000000]        mov byte[result], al
+   126 00000111 EB94                    jmp display
